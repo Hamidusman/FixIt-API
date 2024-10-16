@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'djoser',
 ]
 
@@ -90,11 +91,12 @@ DATABASES = {
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
 }
 
-AUTH_USER_MODEL = 'users.User'
-
+# AUTH_USER_MODEL = 'users.User'
+'''
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
@@ -102,9 +104,10 @@ DJOSER = {
         'current_user': 'djoser.serializers.UserSerializer',
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
+    'USERNAME_FIELD': 'email',
     'LOGIN_FIELD': 'email',
     'USER_ID_FIELD': 'email',
-}
+}'''
 
 
 # Password validation

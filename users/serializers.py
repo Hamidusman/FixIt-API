@@ -1,10 +1,8 @@
-from djoser.serializers import UserCreateSerializer as BaseUserCreateSerializer
-from rest_framework import serializers
-from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreateSerializer
+from rest_framework import serializer
+'''from .models import User
 
-User = get_user_model()
-
-class UserCreateSerializer(BaseUserCreateSerializer):
-    class Meta(BaseUserCreateSerializer.Meta):
+class UserCreateSerializer(UserCreateSerializer):
+    class Meta(UserCreateSerializer.Meta):
         model = User
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'email', 'password')'''
