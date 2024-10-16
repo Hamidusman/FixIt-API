@@ -1,9 +1,7 @@
-'''
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
-import uuid
 
-class UserManager(BaseUserManager):
+class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
@@ -20,15 +18,10 @@ class UserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 class User(AbstractUser):
+    username = None
     email = models.EmailField(unique=True)
-    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    is_active = models.BooleanField(default=True)
-
-    objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = []  # No additional required fields
 
-    def __str__(self):
-        return self.email
-'''
+    objects = CustomUserManager()  # Set the custom manager

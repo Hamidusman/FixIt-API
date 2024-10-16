@@ -95,8 +95,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-# AUTH_USER_MODEL = 'users.User'
-'''
+AUTH_USER_MODEL = 'users.User'
 DJOSER = {
     'SERIALIZERS': {
         'user_create': 'users.serializers.UserCreateSerializer',
@@ -105,9 +104,14 @@ DJOSER = {
     },
     'USER_CREATE_PASSWORD_RETYPE': True,
     'USERNAME_FIELD': 'email',
+    'USER_ID_FIELD': 'id',
     'LOGIN_FIELD': 'email',
-    'USER_ID_FIELD': 'email',
-}'''
+    'SEND_ACTIVATION_EMAIL': False, 
+}
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',  # Standard backend
+)
 
 
 # Password validation
