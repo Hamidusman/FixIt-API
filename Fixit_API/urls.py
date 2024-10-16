@@ -22,6 +22,6 @@ urlpatterns = [
     path('', include('core.urls')),
     path('', include('users.urls')),
     re_path('d', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.jwt')),
+    re_path('auth/', include('djoser.urls')),
+    re_path('auth/', include('djoser.urls.jwt')),
 ]
