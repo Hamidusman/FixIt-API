@@ -14,8 +14,8 @@ class BookingSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
-    
-class StatSerializer(serializers.Serializers):
+    '''
+class StatSerializer(serializers.Serializer):
     total_bookings = serializers.IntegerField()
     jobs_completed = serializers.IntegerField()
-    ratings = serializers.IntegerField()
+    ratings = serializers.IntegerField()'''
