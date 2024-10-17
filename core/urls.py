@@ -1,10 +1,11 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import ServiceViewSet
+from . import views
 
 router = DefaultRouter()
-router.register(r'services', ServiceViewSet, basename='service')
+router.register(r'services', views.ServiceViewSet, basename='service')
+router.register(r'booking', views.BookingViewSet, basename='booking')
 
 urlpatterns = [
-    path('', include(router.urls)),  # Registers all the routes for ServiceViewSet
+    path('', include(router.urls)),
 ]

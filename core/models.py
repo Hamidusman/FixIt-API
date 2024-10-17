@@ -9,13 +9,13 @@ class Service(models.Model):
     base_rate = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_('base rate'))
 
     def __str__(self):
-        return self.specialty
+        return self.category
 
 class Booking(models.Model):
     phone_number = models.IntegerField(verbose_name=_('phone number'))
     email = models.EmailField()
     address = models.CharField(max_length=100)
-    region = models.CharField(max_length=20)
+    region = models.CharField(max_length=20, default='abuja')
     state = models.CharField(max_length=20)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     description = models.TextField()
@@ -24,7 +24,7 @@ class Booking(models.Model):
     #status = models.CharField(choices=)
 
     def __str__(self):
-        return {f'Booking for {self.service.specialty} by {self.firstname}+{self.lastname}'}
+        return {f'Booking for {self.service.category} by {self.firstname}+{self.lastname}'}
 
 class Rating(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
