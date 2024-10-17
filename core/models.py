@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import User
 from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
@@ -13,7 +14,7 @@ class Service(models.Model):
 
 class Booking(models.Model):
     phone_number = models.IntegerField(verbose_name=_('phone number'))
-    email = models.EmailField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     region = models.CharField(max_length=20, default='abuja')
     state = models.CharField(max_length=20)

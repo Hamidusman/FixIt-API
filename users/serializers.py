@@ -7,7 +7,11 @@ class UserCreateSerializer(UserCreateSerializer):
         model = User
         fields = ('id', 'email', 'password')
 
-class ProfileSerializer(serializers.ModelSerializers):
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = [
+                   'firstname', 'lastname', 'user', 'phone_number',
+                   'address', 'avatar', 'bio'
+                ]
+        read_only_fields = ['created_at']
