@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from .serializers import ProfileSerializer
+from rest_framework.decorators import action
 from .models import Profile
+from core.models import Booking
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
@@ -10,26 +12,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
-    
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-    
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(f'Deleted profile for {instance.user.email}')
-    
+    @action (detail=True, methods=['get'])
+    def get_user_stats(self, request, *args, **kwargs):
+        user = self.get_object()
+        total_booking = Booking.objects.filter(user=user).count()
+        return Response({
+            'total_booking': total_booking or 0
+        })
