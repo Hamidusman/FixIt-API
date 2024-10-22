@@ -7,7 +7,6 @@ from users.models import Profile
 class Service(models.Model):
     category = models.CharField(max_length=50)
     description = models.CharField(max_length=200)
-    image = models.ImageField(upload_to=('images'))
     base_rate = models.DecimalField(max_digits=6, decimal_places=2, verbose_name=_('base rate'))
 
     def __str__(self):
@@ -15,7 +14,7 @@ class Service(models.Model):
 
 class Booking(models.Model):
     phone_number = models.IntegerField(verbose_name=_('phone number'))
-    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     region = models.CharField(max_length=20, default='abuja')
     state = models.CharField(max_length=20)
