@@ -7,12 +7,14 @@ from core.models import Booking
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
+from rest_framework.permissions import IsAuthenticated
 from djoser.views import UserViewSet
 # Create your views here.
 
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         user = request.user
