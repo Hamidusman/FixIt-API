@@ -14,15 +14,35 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
 
-    @action (detail=True, methods=['get'])
+    def create(self, request, *args, **kwargs):
+        user = request.user
+
+        # Check if profile for the user already exists
+        if Profile.objects.filter(user=user).exists():
+            return Response(
+                {"detail": "You already created a profile!"},
+                status=400
+            )
+        
+        # Create the profile with user automatically assigned
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Save the profile with the current authenticated user
+        serializer.save(user=user)
+        
+        return Response(serializer.data, status=201)
+
+
+'''    @action (detail=True, methods=['get'])
     def get_user_stats(self, request, *args, **kwargs):
         user = self.get_object()
         total_booking = Booking.objects.filter(user=user).count()
         return Response({
             'total_booking': total_booking or 0
         })
-        
-class CustomUserViewSet(UserViewSet):
+        '''
+'''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
     lookup_url_kwarg = "id"
@@ -36,4 +56,4 @@ class CustomUserViewSet(UserViewSet):
     def dashboard(self, request, *args, **kwargs):
         profile = request.user.profile
         total_booking = Booking.objects.filter(profile=profile)
-    
+    '''

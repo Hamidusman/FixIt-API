@@ -31,10 +31,14 @@ class User(AbstractUser):
 class Profile(models.Model):
     firstname = models.CharField(max_length=20, verbose_name=_('first name'))
     lastname = models.CharField(max_length=20, verbose_name=_('last name'))
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    state = models.CharField(max_length=30)
+    region = models.CharField(max_length=30)
+    address = models.TextField()
+    phone_number = models.CharField(max_length=15)
+    
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-    bio = models.TextField(blank=True, null=True)
+    
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
