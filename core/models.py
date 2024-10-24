@@ -13,14 +13,16 @@ class Service(models.Model):
         return self.category
 
 class Booking(models.Model):
-    phone_number = models.IntegerField(verbose_name=_('phone number'))
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    phone_number = models.IntegerField(verbose_name=_('phone number'))
+    description = models.TextField()
     address = models.CharField(max_length=100)
     region = models.CharField(max_length=20, default='abuja')
     state = models.CharField(max_length=20)
-    description = models.TextField()
     date = models.DateField()
     time = models.TimeField()
+    duration = models.IntegerField()
+    created_at = models.DateTimeField(auto_now=True)
     #status = models.CharField(choices=)
 
     def __str__(self):

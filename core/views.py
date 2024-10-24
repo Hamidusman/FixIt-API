@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Service, Booking
+from users.models import Profile
 from .serializers import ServiceSerializer, BookingSerializer
 
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -36,9 +37,13 @@ class BookingViewSet(viewsets.ModelViewSet):
     serializer_class = BookingSerializer
 
     def post(self, request, *args, **kwargs):
+        user = request.user
+
+        profile = Profile.objects.filter(user=user).first()
         serializer = self.get_serializer(data=request.data)
+
         serializer.is_valid(raise_exception=True)
-        serializer.save()
+        serializer.save(profile=profile)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     def retrieve(self, request, *args, **kwargs):
