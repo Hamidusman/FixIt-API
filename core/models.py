@@ -18,7 +18,6 @@ class Booking(models.Model):
     address = models.CharField(max_length=100)
     region = models.CharField(max_length=20, default='abuja')
     state = models.CharField(max_length=20)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
     description = models.TextField()
     date = models.DateField()
     time = models.TimeField()
