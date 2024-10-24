@@ -4,6 +4,7 @@ from .serializers import ProfileSerializer, UserSerializer
 from rest_framework.decorators import action
 from .models import Profile, User
 from core.models import Booking
+from core.serializers import BookingSerializer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics, viewsets
@@ -56,6 +57,18 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return Response({
             'total_booking': total_booking or 0
         })
+
+    @action(
+        detail=False,methods=["get"],
+        permission_classes=[IsAuthenticated]
+    )
+    def user_booking_log(self, request, *args, **kwargs):
+        user = request.user
+        profile = Profile.objects.filter(user=user).first()
+        bookings = Booking.objects.filter(profile=profile)
+        
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
 
 '''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]
