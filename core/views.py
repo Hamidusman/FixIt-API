@@ -43,8 +43,14 @@ class BookingViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        booking = serializer.save(profile=profile)
+        serializer.save(profile=profile)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(f'Deleted booking for {instance.service}')
+'''
         # Send the confirmation email using Brevo SMTP
         subject = 'Booking Confirmation'
         message = f"Hello {user.first_name},\n\nYour booking is confirmed for {booking.date} at {booking.time}."
@@ -56,11 +62,4 @@ class BookingViewSet(viewsets.ModelViewSet):
             'abdulhamidusman218@gmail.com',
             ['nothamido3@gmail.com'],         # To email
             fail_silently=False,
-        )
-        return Response('booking was successful! You should receive an email soon', status=status.HTTP_201_CREATED)
-
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(f'Deleted booking of {instance.service}')
+        )'''

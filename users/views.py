@@ -12,13 +12,7 @@ from rest_framework.permissions import IsAuthenticated
 from djoser.views import UserViewSet
 # Create your views here.
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        return self.request.user
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
