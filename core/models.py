@@ -13,6 +13,13 @@ class Service(models.Model):
         return self.category
 
 class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('in_progress', 'In Progress'),
+        ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
+    ]
+
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     service = models.ForeignKey(Service, on_delete=models.CASCADE)
     phone_number = models.IntegerField(verbose_name=_('phone number'))
@@ -24,7 +31,7 @@ class Booking(models.Model):
     time = models.TimeField()
     duration = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
-    #status = models.CharField(choices=)
+    status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=25)
 
     def __str__(self):
         return {f'Booking for {self.service.category} by {self.firstname}+{self.lastname}'}

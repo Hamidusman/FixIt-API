@@ -11,11 +11,16 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields = ['profile', 'service', 'phone_number', 'description',
-                  'region', 'address', 'region', 'state',
+                  'region', 'address', 'state',
                   'date', 'time', 'duration',
-                  'created_at'
+                  'created_at', 'status'
                   ]
         read_only_fields = ['profile', 'created_at']
+
+    def validate_status(self, value):
+        if value not in dict(Booking.STATUS_CHOICES):
+            return serializers.ValidationError('Invalid status')
+        return value
 
     def create(self, validated_data):
         request = self.context.get('request')
