@@ -34,6 +34,16 @@ class ProfileViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.data, status=201)
 
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        profile = Profile.objects.filter(user=user).first()
+        if profile is None:
+            return Response({'Error: Profile does not exist'},status=404)
+        serializer = self.get_serializer(profile, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
     @action (detail=False, methods=['get'], url_path='me')
     def my_profile(self, request, *args, **kwargs):
         user = request.user
