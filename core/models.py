@@ -21,7 +21,7 @@ class Booking(models.Model):
     ]
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.CharField(max_length=30)
     phone_number = models.IntegerField(verbose_name=_('phone number'))
     description = models.TextField()
     address = models.CharField(max_length=100)

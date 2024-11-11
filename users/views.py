@@ -68,7 +68,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()
+        profile = Profile.objects.get(user=user)
         bookings = Booking.objects.filter(profile=profile)
         
         serializer = BookingSerializer(bookings, many=True)

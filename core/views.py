@@ -1,8 +1,10 @@
 from rest_framework import viewsets, status
+from django.conf import settings
 from rest_framework.response import Response
 from .models import Service, Booking
 from users.models import Profile
 from .serializers import ServiceSerializer, BookingSerializer
+from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -36,6 +38,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
 class BookingViewSet(viewsets.ModelViewSet):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         user = request.user
@@ -44,22 +47,17 @@ class BookingViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(profile=profile)
+        '''     
+        subject = 'Booking Confirmation'
+        message = f"Dear {profile.firstname},\n\nYour booking has been successfully confirmed."
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = ['abdulhamidusman218@gmail.com']
+        send_mail(subject, message, from_email, recipient_list)
+        '''
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return Response(f'Deleted booking for {instance.service}')
-'''
-        # Send the confirmation email using Brevo SMTP
-        subject = 'Booking Confirmation'
-        message = f"Hello {user.first_name},\n\nYour booking is confirmed for {booking.date} at {booking.time}."
-        recipient_email = user.email
 
-        send_mail(
-            subject,
-            message,
-            'abdulhamidusman218@gmail.com',
-            ['nothamido3@gmail.com'],         # To email
-            fail_silently=False,
-        )'''
