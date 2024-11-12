@@ -59,7 +59,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         profile = Profile.objects.filter(user=user).first()
         total_booking = Booking.objects.filter(profile=profile).count()
         return Response({
-            'total_booking': total_booking or 0
+            'total_booking': total_booking
         })
 
     @action(
@@ -74,6 +74,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
+
 '''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
@@ -85,7 +86,4 @@ class ProfileViewSet(viewsets.ModelViewSet):
         methods=["get"],
         permission_classes=[IsAuthenticated]
     )
-    def dashboard(self, request, *args, **kwargs):
-        profile = request.user.profile
-        total_booking = Booking.objects.filter(profile=profile)
     '''

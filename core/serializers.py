@@ -10,7 +10,7 @@ class ServiceSerializer(serializers.ModelSerializer):
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['profile', 'service', 'phone_number', 'description',
+        fields = ['id', 'profile', 'service', 'phone_number', 'description',
                   'region', 'address', 'state',
                   'date', 'time', 'duration',
                   'created_at', 'status'
