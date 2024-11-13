@@ -39,7 +39,7 @@ class Booking(models.Model):
 class Rating(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField()
-    comment = models.TextField
+    comment = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.comment

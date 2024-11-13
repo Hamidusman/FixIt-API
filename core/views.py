@@ -1,38 +1,12 @@
 from rest_framework import viewsets, status
 from django.conf import settings
 from rest_framework.response import Response
-from .models import Service, Booking
+from .models import Rating, Booking
 from users.models import Profile
-from .serializers import ServiceSerializer, BookingSerializer
+from .serializers import RatingSerializer, BookingSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 
-class ServiceViewSet(viewsets.ModelViewSet):
-    queryset = Service.objects.all()
-    serializer_class = ServiceSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response(serializer.data)
-    
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid()
-        serializer.save()
-        return Response(serializer.data)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class BookingViewSet(viewsets.ModelViewSet):
@@ -61,3 +35,10 @@ class BookingViewSet(viewsets.ModelViewSet):
         instance.delete()
         return Response(f'Deleted booking for {instance.service}')
 
+class RatingViewSet(viewsets.ModelViewSet):
+    serializer_class = RatingSerializer
+    queryset = Rating.objects.all()
+    permission_classes = [IsAuthenticated]
+    
+
+    

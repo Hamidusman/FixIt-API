@@ -32,6 +32,7 @@ class BookingSerializer(serializers.ModelSerializer):
 class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
+        fields = ['booking', 'rating', 'comment']
     '''
 class StatSerializer(serializers.Serializer):
     total_bookings = serializers.IntegerField()
