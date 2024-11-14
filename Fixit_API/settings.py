@@ -27,10 +27,7 @@ SECRET_KEY = 'django-insecure-i3^6)@p$lo^j-(s01d6ua1l4#68cmb-c)ur7ul@(v_+y39#cpk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    "localhost:5173",  # React development server
-    "127.0.0.1:3000",  # Alternative local URL
-    "fix-it-tau.vercel.app"]
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -66,11 +63,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
 ]
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React development server
-    "http://127.0.0.1:3000",  # Alternative local URL
-    "http://fix-it-tau.vercel.app",  # Your production frontend URL
-]
+
+USE_SWAGGER=True
+USE_REDOC=True
+LOGIN_URL = '/auth/token/login/'
 
 CORS_ALLOW_METHODS = [
     "GET",
@@ -81,6 +77,7 @@ CORS_ALLOW_METHODS = [
     "OPTIONS",
 ]
 
+CORS_ALLOW_ALL_ORIGINS = True
 ROOT_URLCONF = 'Fixit_API.urls'
 
 TEMPLATES = [
