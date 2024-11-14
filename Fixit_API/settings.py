@@ -25,9 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-i3^6)@p$lo^j-(s01d6ua1l4#68cmb-c)ur7ul@(v_+y39#cpk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = ['*']
+DEBUG = True
+ALLOWED_HOSTS = [
+    "http://localhost:5173",  # React development server
+    "http://127.0.0.1:3000",  # Alternative local URL
+    "https://fix-it-tau.vercel.app"]
 
 
 # Application definition
@@ -66,7 +68,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # React development server
     "http://127.0.0.1:3000",  # Alternative local URL
-    "https://your-production-site.com",  # Your production frontend URL
+    "http://fix-it-tau.vercel.app",  # Your production frontend URL
 ]
 
 CORS_ALLOW_METHODS = [
@@ -136,6 +138,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 AUTHENTICATION_BACKENDS = (
