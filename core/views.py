@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from .models import Rating, Booking
 from users.models import Profile
 from .serializers import RatingSerializer, BookingSerializer
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 
@@ -37,8 +38,19 @@ class BookingViewSet(viewsets.ModelViewSet):
 
 class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
-    queryset = Rating.objects.all()
     permission_classes = [IsAuthenticated]
     
 
-    
+    def get_queryset(self):
+        return Rating.objects.filter(booking__profile__user=self.request.user)
+
+    def perform_create(self, serializer):
+        booking = serializer.validated_data.get('booking')
+        if booking.profile.user != self.request.user:
+            raise ValidationError("You can only rate your own bookings.")
+
+        # makes sure booking is completed before allowing a rating
+        if booking.status != 'completed':
+            raise ValidationError("You can only rate completed bookings.")
+
+        serializer.save(reviewer=self.request.user)

@@ -1,5 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 from users.models import Profile
 # Create your models here.
@@ -40,6 +43,7 @@ class Rating(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
     rating = models.PositiveIntegerField()
     comment = models.TextField(blank=True, null=True)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.comment
+        return f'Rating by {self.reviewer} for booking {self.booking.id}'
