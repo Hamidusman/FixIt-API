@@ -29,7 +29,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="abdulhamidusman218@gmail.com"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny),
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
