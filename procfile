@@ -1,0 +1,1 @@
+web: gunicorn Fixit_API.wsgi:application
