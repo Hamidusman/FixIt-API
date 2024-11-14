@@ -28,9 +28,9 @@ SECRET_KEY = 'django-insecure-i3^6)@p$lo^j-(s01d6ua1l4#68cmb-c)ur7ul@(v_+y39#cpk
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://localhost:5173",  # React development server
-    "http://127.0.0.1:3000",  # Alternative local URL
-    "http://fix-it-tau.vercel.app"]
+    "localhost:5173",  # React development server
+    "127.0.0.1:3000",  # Alternative local URL
+    "fix-it-tau.vercel.app"]
 
 
 # Application definition
