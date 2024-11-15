@@ -67,6 +67,7 @@ MIDDLEWARE = [
 USE_SWAGGER=True
 USE_REDOC=True
 LOGIN_URL = '/auth/token/login/'
+LOGIN_REDIRECT_URL = '/'
 
 CORS_ALLOW_METHODS = [
     "GET",
