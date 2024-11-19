@@ -38,7 +38,7 @@ class Booking(models.Model):
     status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=25)
 
     def __str__(self):
-        return {f'Booking for {self.service}'}
+        return f'Booking for {self.service}'
 
 class Rating(models.Model):
     booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
