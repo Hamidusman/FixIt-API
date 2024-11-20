@@ -8,6 +8,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 
+from ..Fixit_API.tasks import send_booking_email
+
 
 
 class BookingViewSet(viewsets.ModelViewSet):
@@ -25,9 +27,8 @@ class BookingViewSet(viewsets.ModelViewSet):
         '''     
         subject = 'Booking Confirmation'
         message = f"Dear {profile.firstname},\n\nYour booking has been successfully confirmed."
-        from_email = settings.DEFAULT_FROM_EMAIL
-        recipient_list = ['abdulhamidusman218@gmail.com']
-        send_mail(subject, message, from_email, recipient_list)
+        recipient_list = [profile.user.email]
+        send_booking_email.delay(subject, message, recipient_list)
         '''
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
