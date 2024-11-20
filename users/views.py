@@ -58,8 +58,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         user = request.user
         profile = Profile.objects.filter(user=user).first()
         total_booking = Booking.objects.filter(profile=profile).count()
+        completed = Booking.objects.filter(profile=profile, status='completed').count()
+        #pending = Booking.objects.filter(profile=profile, status='pending').count()
+        
         return Response({
-            'total_booking': total_booking
+            'total_booking': total_booking,
+            'completed': completed,
         })
 
     @action(
