@@ -117,6 +117,15 @@ DATABASES = {
         ),
     
 }
+'''CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://red-csv3v1rqf0us739ieorg:6379',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    },
+}'''
 
 
 AUTH_USER_MODEL = 'users.User'
