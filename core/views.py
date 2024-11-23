@@ -1,5 +1,4 @@
 from rest_framework import viewsets, status
-from django.conf import settings
 from rest_framework.response import Response
 from .models import Rating, Booking
 from users.models import Profile
@@ -13,7 +12,7 @@ from django.core.mail import send_mail
 
 
 class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.all()
+    queryset = Booking.objects.select_related('profile')
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
 
@@ -42,7 +41,7 @@ class RatingViewSet(viewsets.ModelViewSet):
     
 
     def get_queryset(self):
-        return Rating.objects.filter(booking__profile__user=self.request.user)
+        return Rating.objects.filter(rewiewer=self.request.user)
 
     def perform_create(self, serializer):
         booking = serializer.validated_data.get('booking')
