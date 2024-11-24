@@ -60,8 +60,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
         )
 
         return Response({
-            'total_booking': stats.get('total_booking', 0),
-            'completed': stats.get('completed_booking', 0),
+            'total_booking': stats['total_booking'],
+            'completed': stats['completed_booking'],
         })
     @action(
         detail=False,methods=["get"],
@@ -70,7 +70,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
         bookings = Booking.objects.filter(profile__user=user).select_related('profile')
-        
+
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
 
