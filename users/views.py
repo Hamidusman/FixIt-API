@@ -13,22 +13,21 @@ from django.shortcuts import get_object_or_404
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related('user')
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, user):
-        return get_object_or_404(Profile, user=user)
+        return get_object_or_404(Profile.objects.select_related('user'), user=user)
     def create(self, request, *args, **kwargs):
         user = request.user
-
-        if Profile.objects.filter(user=user).exists():
+        profile, created = Profile.objects.get_or_create(user=user)
+        if not created:
             return Response(
                 {"detail": "You already created a profile!"},
                 status=400
             )
-        
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(instance=profile, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=user)
         return Response(serializer.data, status=201)
@@ -58,16 +57,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
             completed_booking=Count('id', filter=Q(status='completed'))
         ).first()()
         
-        if stats:
-            return Response({
-                'total_booking': stats['total_booking'],
-                'completed': stats['completed_booking'],
-            })
-        else:
-            return Response({
-                'total_booking': 0,
-                'completed': 0,
-            })
+        return Response({
+            'total_booking': stats['total_booking'] or 0,
+            'completed': stats['completed_booking'] or 0
+        })
 
     @action(
         detail=False,methods=["get"],
@@ -75,8 +68,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = self.get_profile(user)
-        bookings = Booking.objects.filter(profile=profile)
+        bookings = Booking.objects.filter(profile__user=user).select_related('profile')
         
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)

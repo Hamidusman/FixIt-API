@@ -22,7 +22,6 @@ class BookingSerializer(serializers.ModelSerializer):
         base_rate = 10
         return base_rate ((duration - 15) // 15) * 2
 
-
     def create(self, validated_data):
         duration = validated_data.get('duration')
         validated_data['price'] = self.calculate_price(duration)
@@ -34,10 +33,9 @@ class BookingSerializer(serializers.ModelSerializer):
 
 class RatingSerializer(serializers.ModelSerializer):
     reviewer = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = Rating
-        fields = ['id', 'booking', 'rating', 'comment', 'reviewer']
+        fields = ['booking', 'rating', 'comment', 'reviewer']
         read_only_fields = ['reviewer']
 
     def validate_rating(self, value):

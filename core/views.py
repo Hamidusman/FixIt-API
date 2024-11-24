@@ -1,5 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from django.core.cache import cache
+
 from .models import Rating, Booking
 from users.models import Profile
 from .serializers import RatingSerializer, BookingSerializer
@@ -8,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.core.mail import send_mail
 
 #from Fixit_API.tasks import send_booking_email
+
 
 
 
@@ -34,14 +37,11 @@ class BookingViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(f'Deleted booking for {instance.service}')
-
 class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
-    permission_classes = [IsAuthenticated]
-    
 
     def get_queryset(self):
-        return Rating.objects.filter(rewiewer=self.request.user)
+        return Rating.objects.filter(reviewer=self.request.user)
 
     def perform_create(self, serializer):
         booking = serializer.validated_data.get('booking')
