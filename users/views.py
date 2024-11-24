@@ -52,14 +52,18 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
         profile = self.get_profile(user)
+
         stats = Booking.objects.filter(profile=profile).values('profile').annotate(
             total_booking=Count('id'),
             completed_booking=Count('id', filter=Q(status='completed'))
-        ).first()()
-        
+        ).first()
+
+        if stats is None:
+            stats = {'total_booking': 0, 'completed_booking': 0}
+
         return Response({
-            'total_booking': stats['total_booking'] or 0,
-            'completed': stats['completed_booking'] or 0
+            'total_booking': stats.get('total_booking', 0),
+            'completed': stats.get('completed_booking', 0)
         })
 
     @action(
