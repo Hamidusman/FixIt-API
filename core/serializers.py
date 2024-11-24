@@ -20,7 +20,9 @@ class BookingSerializer(serializers.ModelSerializer):
     
     def calculate_price(self, duration):
         base_rate = 10
-        return base_rate ((duration - 15) // 15) * 2
+        if duration is None or duration < 15:
+            raise ValueError("Duration must be at least 15 minutes.")
+        return base_rate + ((duration - 15) // 15) * 2
 
     def create(self, validated_data):
         duration = validated_data.get('duration')
