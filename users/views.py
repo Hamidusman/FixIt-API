@@ -54,14 +54,12 @@ class ProfileViewSet(viewsets.ModelViewSet):
         profile = self.get_profile(user)
         if not profile:
             return Response({'error': 'Profile not found'}, status=404)
-        stats = Booking.objects.filter(profile=profile).aggregate(
-            total_booking=Count('id'),
-            completed_booking=Count('id', filter=Q(status='completed'))
-        )
+        total_booking = Booking.objects.filter(profile=profile).count()
+        completed = Booking.objects.filter(profile=profile, status='completed').count()
 
         return Response({
-            'total_booking': stats['total_booking'],
-            'completed': stats['completed_booking'],
+            'total_booking': total_booking,
+            'completed': completed,
         })
     @action(
         detail=False,methods=["get"],
@@ -69,7 +67,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        bookings = Booking.objects.filter(profile__user=user).select_related('profile')
+        profile = Profile.objects.filter(user=user)
+        bookings = Booking.objects.filter(profile=profile).count()
 
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
