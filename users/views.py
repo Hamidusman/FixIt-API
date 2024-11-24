@@ -48,24 +48,21 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profile)
         return Response(serializer.data)
     
-    @action (detail=False, methods=['get'], url_path='user-stat')
+    @action(detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
         profile = self.get_profile(user)
-
-        stats = Booking.objects.filter(profile=profile).values('profile').annotate(
+        if not profile:
+            return Response({'error': 'Profile not found'}, status=404)
+        stats = Booking.objects.filter(profile=profile).aggregate(
             total_booking=Count('id'),
             completed_booking=Count('id', filter=Q(status='completed'))
-        ).first()
-
-        if stats is None:
-            stats = {'total_booking': 0, 'completed_booking': 0}
+        )
 
         return Response({
             'total_booking': stats.get('total_booking', 0),
-            'completed': stats.get('completed_booking', 0)
+            'completed': stats.get('completed_booking', 0),
         })
-
     @action(
         detail=False,methods=["get"],
         permission_classes=[IsAuthenticated]
