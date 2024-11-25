@@ -21,12 +21,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return get_object_or_404(Profile, user=user)
     def create(self, request, *args, **kwargs):
         user = request.user
-
-        if Profile.objects.filter(user=user).exists():
-            return Response(
-                {"detail": "You already created a profile!"},
-                status=400
-            )
         
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -52,22 +46,14 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action (detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
-        profile = self.get_profile(user)
-        stats = Booking.objects.filter(profile=profile).values('profile').annotate(
-            total_booking=Count('id'),
-            completed_booking=Count('id', filter=Q(status='completed'))
-        ).first()()
+        profile = Profile.objects.get(user=user)
+        total_booking = Booking.objects.filter(profile=profile).count()
+        completed = Booking.objects.filter(profile=profile, status='completed').count()
         
-        if stats:
-            return Response({
-                'total_booking': stats['total_booking'],
-                'completed': stats['completed_booking'],
-            })
-        else:
-            return Response({
-                'total_booking': 0,
-                'completed': 0,
-            })
+        return Response({
+            'total_booking': total_booking,
+            'completed': completed
+        })
 
     @action(
         detail=False,methods=["get"],
@@ -75,7 +61,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     )
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = self.get_profile(user)
+        profile = Profile.objects.get(user=user)
         bookings = Booking.objects.filter(profile=profile)
         
         serializer = BookingSerializer(bookings, many=True)
