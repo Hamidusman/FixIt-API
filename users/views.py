@@ -48,31 +48,34 @@ class ProfileViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(profile)
         return Response(serializer.data)
     
-    @action(detail=False, methods=['get'], url_path='user-stat')
-    def get_user_stats(self, request, *args, **kwargs):
-        user = request.user
-        profile = self.get_profile(user)
-        if not profile:
-            return Response({'error': 'Profile not found'}, status=404)
-        total_booking = Booking.objects.filter(profile=profile).count()
-        completed = Booking.objects.filter(profile=profile, status='completed').count()
+@action(detail=False, methods=['get'], url_path='user-stat')
+def get_user_stats(self, request, *args, **kwargs):
+    user = request.user
+    profile = self.get_profile(user)
+    if not profile:
+        return Response({'error': 'Profile not found'}, status=404)
+    
+    total_booking = Booking.objects.filter(profile=profile).count()
+    
+    completed = Booking.objects.filter(profile=profile, status='completed').count()
 
-        return Response({
-            'total_booking': total_booking,
-            'completed': completed,
-        })
-    @action(
-        detail=False,methods=["get"],
-        permission_classes=[IsAuthenticated]
-    )
-    def user_booking_log(self, request, *args, **kwargs):
-        user = request.user
-        profile = Profile.objects.filter(user=user)
-        bookings = Booking.objects.filter(profile=profile).count()
+    return Response({
+        'total_booking': total_booking,
+        'completed': completed,
+    })
 
-        serializer = BookingSerializer(bookings, many=True)
-        return Response(serializer.data)
+@action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
+def user_booking_log(self, request, *args, **kwargs):
+    user = request.user
+    profile = Profile.objects.filter(user=user).first()  # Get the first matching profile
 
+    if not profile:
+        return Response({'error': 'Profile not found'}, status=404)
+    
+    bookings = Booking.objects.filter(profile=profile)
+    
+    serializer = BookingSerializer(bookings, many=True)
+    return Response(serializer.data)
 
 '''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]
