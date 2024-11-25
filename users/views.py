@@ -1,44 +1,41 @@
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import render
-from .serializers import ProfileSerializer, UserSerializer
+from .serializers import ProfileSerializer
+from django.db.models import Count, Q
 from rest_framework.decorators import action
-from .models import Profile, User
+from .models import Profile
 from core.models import Booking
 from core.serializers import BookingSerializer
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from djoser.views import UserViewSet
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related('user')
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_profile(self, user):
+        return get_object_or_404(Profile.objects.select_related('user'), user=user)
     def create(self, request, *args, **kwargs):
         user = request.user
-
-        if Profile.objects.filter(user=user).exists():
+        profile, created = Profile.objects.get_or_create(user=user)
+        if not created:
             return Response(
                 {"detail": "You already created a profile!"},
                 status=400
             )
-        
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(instance=profile, data=request.data)
         serializer.is_valid(raise_exception=True)
-        
         serializer.save(user=user)
-        
         return Response(serializer.data, status=201)
 
     def patch(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()
-        if profile is None:
-            return Response({'Error: Profile does not exist'},status=404)
+        profile = self.get_profile(user)
+        
         serializer = self.get_serializer(profile, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -47,37 +44,35 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action (detail=False, methods=['get'], url_path='me')
     def my_profile(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()
-        if profile is None:
-            return Response({'Error: Profile does not exist'},status=404)
+        profile = self.get_profile(user)
         serializer = self.get_serializer(profile)
         return Response(serializer.data)
-    
-    @action (detail=False, methods=['get'], url_path='user-stat')
+        
+    @action(detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()
-        total_booking = Booking.objects.filter(profile=profile).count()
-        completed = Booking.objects.filter(profile=profile, status='completed').count()
-        #pending = Booking.objects.filter(profile=profile, status='pending').count()
+        profile = Profile.objects.get(user=user)
+        if not profile:
+            return Response({'error': 'Profile not found'}, status=404)
         
+        total_booking = Booking.objects.filter(profile=profile).count()
+        
+        completed = Booking.objects.filter(profile=profile, status='completed').count()
+
         return Response({
             'total_booking': total_booking,
             'completed': completed,
-        })
+        }, status=200)
 
-    @action(
-        detail=False,methods=["get"],
-        permission_classes=[IsAuthenticated]
-    )
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.get(user=user)
+        profile = Profile.objects.get(user=user)  # Get the first matching profile
+
         bookings = Booking.objects.filter(profile=profile)
         
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
-
 
 '''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]

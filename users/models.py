@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
         if not email:
-            raise ValueError('The Email field must be set')
+            raise ValueError(_('The Email field must be set'))
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -19,20 +19,28 @@ class CustomUserManager(BaseUserManager):
 
         return self.create_user(email, password, **extra_fields)
 
+
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []  # No additional required fields
+    REQUIRED_FIELDS = []
 
-    objects = CustomUserManager()  # Set the custom manager
+    objects = CustomUserManager()
+
 
 class Profile(models.Model):
-    firstname = models.CharField(max_length=20, verbose_name=_('first name'))
-    lastname = models.CharField(max_length=20, verbose_name=_('last name'))
-    state = models.CharField(max_length=30)
-    region = models.CharField(max_length=30)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
+        related_name='profile'
+    )
+    firstname = models.CharField(max_length=50, 
+                                verbose_name=_('First name'))
+    lastname = models.CharField(max_length=50, 
+                                verbose_name=_('Last name'))
+    state = models.CharField(max_length=50)
+    region = models.CharField(max_length=50)
     address = models.TextField()
     phone_number = models.CharField(max_length=15,default=2222)
     
@@ -40,6 +48,10 @@ class Profile(models.Model):
     
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Profile')
+        verbose_name_plural = _('Profiles')
 
     def __str__(self):
         return f'Profile of {self.user.email}'
