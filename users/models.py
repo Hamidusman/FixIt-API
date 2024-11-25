@@ -34,7 +34,7 @@ class Profile(models.Model):
     state = models.CharField(max_length=30)
     region = models.CharField(max_length=30)
     address = models.TextField()
-    phone_number = models.CharField(max_length=15)
+    phone_number = models.CharField(max_length=15,default=2222)
     
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
