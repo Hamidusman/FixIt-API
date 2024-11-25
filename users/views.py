@@ -51,7 +51,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
-        profile = self.get_profile(user)
+        profile = profile.objects.get(user=user)
         if not profile:
             return Response({'error': 'Profile not found'}, status=404)
         
@@ -67,11 +67,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()  # Get the first matching profile
+        profile = Profile.objects.filter(user=user)  # Get the first matching profile
 
-        if not profile:
-            return Response({'error': 'Profile not found'}, status=404)
-        
         bookings = Booking.objects.filter(profile=profile)
         
         serializer = BookingSerializer(bookings, many=True)

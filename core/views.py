@@ -21,7 +21,7 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user).first()
+        profile = Profile.objects.filter(user=user)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
