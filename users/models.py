@@ -42,13 +42,11 @@ class Profile(models.Model):
     state = models.CharField(max_length=50)
     region = models.CharField(max_length=50)
     address = models.TextField()
-    phone_number = models.CharField(max_length=15,
-                                    blank=True,
-                                    null=True
-    )
-    avatar = models.ImageField(upload_to='avatars/',
-                                blank=True, null=True
-    )
+    phone_number = models.CharField(max_length=15,default=2222)
+    
+    avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

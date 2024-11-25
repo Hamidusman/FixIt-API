@@ -107,8 +107,6 @@ WSGI_APPLICATION = 'Fixit_API.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -122,6 +120,7 @@ DATABASES = {
         ),
     
 }
+'''
 
 
 AUTH_USER_MODEL = 'users.User'

@@ -17,8 +17,8 @@ class Booking(models.Model):
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
     service = models.CharField(max_length=30)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=True)
-    phone_number = models.CharField(max_length=15, verbose_name=_('phone number'))
+    price = models.DecimalField(max_digits=10, decimal_places=2,  null=True, default=True)
+    phone_number = models.CharField(max_length=15,default=2222, verbose_name=_('phone number'))
     description = models.TextField()
     address = models.CharField(max_length=100)
     region = models.CharField(max_length=20, default='abuja')
