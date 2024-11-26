@@ -15,17 +15,16 @@ from django.core.mail import send_mail
 
 
 class BookingViewSet(viewsets.ModelViewSet):
-    queryset = Booking.objects.select_related('profile')
+    queryset = Booking.objects.select_related('user')
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(profile=profile)
+        serializer.save(user=user)
         '''
         subject = 'Booking Confirmation'
         message = f"Dear {profile.firstname},\n\nYour booking has been successfully confirmed."
@@ -37,6 +36,8 @@ class BookingViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
         instance.delete()
         return Response(f'Deleted booking for {instance.service}')
+    
+    
 class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
 
@@ -49,7 +50,7 @@ class RatingViewSet(viewsets.ModelViewSet):
         serializer.save(reviewer=self.request.user)
         
     def validate_booking(self, booking):
-        if booking.profile.user != self.request.user:
+        if booking.user != self.request.user:
             return(ValidationError, "You can only rate your own booking")
         if booking.status != 'completed':
             return(ValidationError, 'Can only rate completed services')

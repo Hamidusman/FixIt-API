@@ -8,6 +8,7 @@ from core.serializers import BookingSerializer
 from rest_framework.response import Response
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 # Create your views here.
 
@@ -45,22 +46,19 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.get(user=user)
-        total_booking = Booking.objects.filter(profile=profile).count()
-        completed = Booking.objects.filter(profile=profile, status='completed').count()
-        
+        total_booking = Booking.objects.filter(user=user).count()
+        completed = Booking.objects.filter(user=user, status='completed').count()
         return Response({
             'total_booking': total_booking,
-            'completed': completed,
-        }, status=200)
+            'completed': completed})
 
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.get(user=user)
-        bookings = Booking.objects.filter(profile=profile)
+        qs = Booking.objects.all()
         
-        serializer = BookingSerializer(bookings, many=True)
+        serializer = BookingSerializer(qs, many=True)
+        print("Serialized data:", serializer.data)
         return Response(serializer.data)
 
 '''class CustomUserViewSet(UserViewSet):
