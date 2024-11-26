@@ -54,9 +54,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    
-    'django.middleware.cache.UpdateCacheMiddleware',  # Adds caching at the start of request processing
-    'django.middleware.cache.FetchFromCacheMiddleware',
 
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -116,20 +113,11 @@ DATABASES = {
 }
 '''
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL'),
-        ),
-    
+'default': dj_database_url.config(
+    default=os.getenv('DATABASE_URL'),
+    ),
 }
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://red-csv3v1rqf0us739ieorg:6379',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
-    },
-}'''
+'''
 
 
 AUTH_USER_MODEL = 'users.User'

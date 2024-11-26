@@ -1,16 +1,15 @@
 from rest_framework import serializers
 from .models import Booking, Rating
-from users.models import Profile
 
 class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
-        fields = ['id', 'profile', 'service', 'phone_number', 'price', 'description',
+        fields = ['id', 'user', 'service', 'phone_number', 'price', 'description',
             'region', 'address', 'state',
             'date', 'time', 'duration',
             'created_at', 'status'
             ]
-        read_only_fields = ['profile', 'created_at']
+        read_only_fields = ['user', 'created_at']
 
     def validate_status(self, value):
         if value not in dict(Booking.STATUS_CHOICES):
@@ -29,8 +28,8 @@ class BookingSerializer(serializers.ModelSerializer):
         validated_data['price'] = self.calculate_price(duration)
         
         request = self.context.get('request')
-        profile = Profile.objects.get(user=request.user)
-        validated_data['profile'] = profile
+        user=request.user
+        validated_data['user'] = user
         return super().create(validated_data)
 
 class RatingSerializer(serializers.ModelSerializer):

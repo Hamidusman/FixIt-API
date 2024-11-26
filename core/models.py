@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
+from users.models import User
 
 from users.models import Profile
 # Create your models here.
@@ -15,7 +13,7 @@ class Booking(models.Model):
         ('canceled', 'Canceled'),
     ]
 
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     service = models.CharField(max_length=30)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=True)
     phone_number = models.CharField(max_length=15, verbose_name=_('phone number'))
@@ -28,6 +26,16 @@ class Booking(models.Model):
     duration = models.PositiveIntegerField()
     created_at = models.DateTimeField(auto_now=True)
     status = models.CharField(choices=STATUS_CHOICES, default='pending', max_length=25)
+    
+    
+    class Meta:
+        indexes = [
+            models.Index(fields=['user']),  # Queries by user
+            models.Index(fields=['status']),  # Queries by status
+            models.Index(fields=['user', 'status']),  # Combined filters
+        ]
+        verbose_name = _('Booking')
+        verbose_name_plural = _('Bookings')
 
     def __str__(self):
         return f'Booking for {self.service}'

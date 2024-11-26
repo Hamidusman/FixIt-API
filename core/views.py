@@ -21,11 +21,10 @@ class BookingViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.filter(user=user)
 
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(profile=profile)
+        serializer.save(user=user)
         '''
         subject = 'Booking Confirmation'
         message = f"Dear {profile.firstname},\n\nYour booking has been successfully confirmed."
