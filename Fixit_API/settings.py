@@ -108,7 +108,6 @@ WSGI_APPLICATION = 'Fixit_API.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -122,6 +121,15 @@ DATABASES = {
         ),
     
 }
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://red-csv3v1rqf0us739ieorg:6379',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    },
+}'''
 
 
 AUTH_USER_MODEL = 'users.User'

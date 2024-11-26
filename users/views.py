@@ -21,13 +21,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return get_object_or_404(Profile.objects.select_related('user'), user=user)
     def create(self, request, *args, **kwargs):
         user = request.user
-        profile, created = Profile.objects.get_or_create(user=user)
-        if not created:
-            return Response(
-                {"detail": "You already created a profile!"},
-                status=400
-            )
-        serializer = self.get_serializer(instance=profile, data=request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=user)
         return Response(serializer.data, status=201)
@@ -52,13 +46,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
         profile = Profile.objects.get(user=user)
-        if not profile:
-            return Response({'error': 'Profile not found'}, status=404)
-        
         total_booking = Booking.objects.filter(profile=profile).count()
-        
         completed = Booking.objects.filter(profile=profile, status='completed').count()
-
+        
         return Response({
             'total_booking': total_booking,
             'completed': completed,
@@ -67,8 +57,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        profile = Profile.objects.get(user=user)  # Get the first matching profile
-
+        profile = Profile.objects.get(user=user)
         bookings = Booking.objects.filter(profile=profile)
         
         serializer = BookingSerializer(bookings, many=True)
