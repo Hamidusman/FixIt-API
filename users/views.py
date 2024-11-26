@@ -13,15 +13,14 @@ from django.shortcuts import get_object_or_404
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = Profile.objects.select_related('user')
     serializer_class = ProfileSerializer
     permission_classes = [IsAuthenticated]
 
     def get_profile(self, user):
-        return get_object_or_404(Profile, user=user)
+        return get_object_or_404(Profile.objects.select_related('user'), user=user)
     def create(self, request, *args, **kwargs):
         user = request.user
-        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save(user=user)
@@ -42,8 +41,8 @@ class ProfileViewSet(viewsets.ModelViewSet):
         profile = self.get_profile(user)
         serializer = self.get_serializer(profile)
         return Response(serializer.data)
-    
-    @action (detail=False, methods=['get'], url_path='user-stat')
+        
+    @action(detail=False, methods=['get'], url_path='user-stat')
     def get_user_stats(self, request, *args, **kwargs):
         user = request.user
         profile = Profile.objects.get(user=user)
@@ -52,13 +51,10 @@ class ProfileViewSet(viewsets.ModelViewSet):
         
         return Response({
             'total_booking': total_booking,
-            'completed': completed
-        })
+            'completed': completed,
+        }, status=200)
 
-    @action(
-        detail=False,methods=["get"],
-        permission_classes=[IsAuthenticated]
-    )
+    @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
         profile = Profile.objects.get(user=user)
@@ -66,7 +62,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
         
         serializer = BookingSerializer(bookings, many=True)
         return Response(serializer.data)
-
 
 '''class CustomUserViewSet(UserViewSet):
     permission_classes = [IsAuthenticated]
