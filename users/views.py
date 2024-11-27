@@ -55,9 +55,9 @@ class ProfileViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["get"], permission_classes=[IsAuthenticated])
     def user_booking_log(self, request, *args, **kwargs):
         user = request.user
-        qs = Booking.objects.all()
-        
-        serializer = BookingSerializer(qs, many=True)
+        logs = Booking.objects.select_related('user').filter(user=user).order_by('-date')
+
+        serializer = BookingSerializer(logs, many=True)
         print("Serialized data:", serializer.data)
         return Response(serializer.data)
 
